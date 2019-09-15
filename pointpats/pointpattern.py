@@ -91,8 +91,12 @@ class PointPattern(object):
         self.points = self.df.loc[:, [self._x, self._y]]
         self._n, self._p = self.points.shape
         if window is None:
+            mins = self.points.min(axis=0)
+            maxs = self.points.max(axis=0)
+            self.mbb = np.hstack((mins, maxs))
             self.set_window(as_window(poly_from_bbox(self.mbb)))
         else:
+            self.mbb = np.array(window.bbox)
             self.set_window(window)
 
         self._facade()
@@ -220,11 +224,12 @@ class PointPattern(object):
         """
         Minimum bounding box
         """
-        mins = self.points.min(axis=0)
-        maxs = self.points.max(axis=0)
-        return np.hstack((mins, maxs))
+        #mins = self.points.min(axis=0)
+        #maxs = self.points.max(axis=0)
+        #return np.hstack((mins, maxs))
+        return np.array(self.window.bbox)
 
-    mbb = cached_property(_mbb)
+    #mbb = cached_property(_mbb)
 
     def _mbb_area(self):
         """
